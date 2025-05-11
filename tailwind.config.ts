@@ -64,10 +64,13 @@ export default {
 					ring: 'hsl(var(--sidebar-ring))'
 				},
 				techknot: {
-					blue: '#1E40AF',
-					purple: '#5B21B6',
-					lightblue: '#3B82F6',
-					lightpurple: '#8B5CF6',
+					// Updated colors to emerald green and ivory white
+					blue: '#10B981', // Emerald green (replacing blue)
+					purple: '#047857', // Darker emerald green (replacing purple)
+					lightblue: '#34D399', // Lighter emerald green (replacing lightblue)
+					lightpurple: '#6EE7B7', // Lightest emerald green (replacing lightpurple)
+					ivory: '#FFFFF0', // Ivory white
+					ivoryDark: '#F5F5DC', // Darker ivory
 				}
 			},
 			borderRadius: {

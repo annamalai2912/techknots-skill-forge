@@ -16,16 +16,19 @@
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
 
-    --primary: 240 100% 40%;
+    /* Updated to emerald green theme */
+    --primary: 151 55% 41.6%;
     --primary-foreground: 210 40% 98%;
 
-    --secondary: 260 100% 42%;
+    /* Secondary is a darker emerald */
+    --secondary: 154 78% 27.6%;
     --secondary-foreground: 0 0% 100%;
 
     --muted: 210 40% 96.1%;
     --muted-foreground: 215.4 16.3% 46.9%;
 
-    --accent: 260 50% 70%;
+    /* Accent is a light emerald green */
+    --accent: 158 64% 52%;
     --accent-foreground: 0 0% 100%;
 
     --destructive: 0 84.2% 60.2%;
@@ -33,7 +36,7 @@
 
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    --ring: 151 55% 41.6%;
 
     --radius: 0.75rem;
 
@@ -57,7 +60,7 @@
     --popover: 222.2 84% 4.9%;
     --popover-foreground: 210 40% 98%;
 
-    --primary: 210 40% 98%;
+    --primary: 151 55% 41.6%;
     --primary-foreground: 222.2 47.4% 11.2%;
 
     --secondary: 217.2 32.6% 17.5%;

@@ -4,9 +4,10 @@ import { useEffect, useRef } from 'react';
 type RevealOnScrollProps = {
   children: React.ReactNode;
   threshold?: number;
+  delay?: number;
 };
 
-const RevealOnScroll = ({ children, threshold = 0.1 }: RevealOnScrollProps) => {
+const RevealOnScroll = ({ children, threshold = 0.1, delay = 0 }: RevealOnScrollProps) => {
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -14,13 +15,15 @@ const RevealOnScroll = ({ children, threshold = 0.1 }: RevealOnScrollProps) => {
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
-            entry.target.classList.add('active');
+            setTimeout(() => {
+              entry.target.classList.add('active');
+            }, delay);
             scrollObserver.unobserve(entry.target);
           }
         });
       },
       {
-        threshold, // Trigger when 10% of the element is visible
+        threshold, // Trigger when percentage of the element is visible
       }
     );
 
@@ -35,7 +38,7 @@ const RevealOnScroll = ({ children, threshold = 0.1 }: RevealOnScrollProps) => {
         scrollObserver.unobserve(current);
       }
     };
-  }, [threshold]);
+  }, [threshold, delay]);
 
   return (
     <div ref={ref} className="reveal">

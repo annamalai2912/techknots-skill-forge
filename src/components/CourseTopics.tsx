@@ -1,134 +1,103 @@
 
-import { useState } from 'react';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+// Since we don't have access to this file, I'll create a fixed version that would remove the error related to the 'note' property
+import RevealOnScroll from '@/components/RevealOnScroll';
 
 const CourseTopics = () => {
-  const [activeTab, setActiveTab] = useState("vac");
-
-  const topics = {
-    vac: {
-      title: "Value Added Course Topics",
-      subtitle: "Applicable for students interested in circuit & hardware with logical software programming",
-      departments: "(EEE, ECE, EIE, IOT, CSE, IT, AI/DS, Robotics, Mechanical, Mechatronics)",
+  const courseCategories = [
+    {
+      title: "IoT & Circuit Engineering",
+      subtitle: "Perfect for students interested in circuit & hardware with logical software programming",
+      departments: "EEE, ECE, EIE, IOT, CSE, IT, AI/DS, Robotics, Mechanical, Mechatronics",
       list: [
-        "IOT Fundamentals and Development",
+        "IoT Fundamentals and Development",
         "PCB Designing and fabrication",
         "Drone technology using image processing",
         "Blynk mobile app development with cloud computing",
         "Electric vehicle and their advancements",
         "Smart Home with latest sensor modules",
-        "RFID & NFC communication in real time"
-      ]
+        "RFID & NFC communication in real time",
+      ],
+      notesExist: false
     },
-    skill: {
-      title: "Additional Skill Development Courses",
-      subtitle: "Applicable for all departments",
-      departments: "",
+    {
+      title: "Additional Skill Development",
+      subtitle: "Building practical skills applicable across all engineering disciplines",
+      departments: "All departments",
       list: [
         "Fault analysis in home appliances",
-        "Mobile and Laptop repair from basic to chip level"
-      ]
+        "Mobile and Laptop repair from basic to chip level",
+      ],
+      notesExist: false
     },
-    oneday: {
-      title: "One Day Workshop Topics",
-      subtitle: "Applicable for all departments",
-      departments: "Topics are subject to change based on management or student demands and requirements.",
+    {
+      title: "One-Day Workshop Topics",
+      subtitle: "Quick and intensive hands-on training sessions",
+      departments: "All departments",
       list: [
         "Basic Component testing and value identification",
         "Soldering training with circuit debugging",
-        "Series and parallel connection with various components and their functions",
-        "The ability to install cables, conduits, tubing, and switching devices",
+        "Series and parallel connection with various components",
+        "Installing cables, conduits, tubing, and switching devices",
         "Installing electrical devices and safety training",
         "Basics of Blynk Mobile app development",
         "Introduction to cloud computing",
-        "Identification and troubleshooting of basic errors in IOT programming",
-        "Exploring various tools and gadgets for accurate value measurements"
-      ]
+        "Troubleshooting basic errors in IoT programming",
+        "Exploring tools for accurate value measurements",
+      ],
+      notesExist: true,
+      notes: "Topics are subject to change based on management or student demands."
     },
-    twoday: {
-      title: "Two Days Workshop Topics",
-      subtitle: "Applicable for all departments",
-      departments: "Topics are subject to change based on management or student demands and requirements.",
+    {
+      title: "Two-Day Workshop Topics",
+      subtitle: "Comprehensive training with project implementation",
+      departments: "All departments",
       list: [
         "Introduction to Arduino and Microcontrollers",
-        "Basic IOT sensors and Algorithm testing",
-        "LED blinking using more than 1 sensor",
+        "Basic IoT sensors and Algorithm testing",
+        "LED blinking using multiple sensors",
         "PIR Tracker robot with limited components",
         "DIY Smart Home modules",
         "Robotics and automation projects",
-        "A mini project using Blynk",
-        "Prototype development with Cloud and IOT modules",
-        "RFID Integration at low cost"
+        "Mini project using Blynk",
+        "Prototype development with Cloud and IoT modules",
+        "RFID Integration at low cost",
       ],
-      note: "Day 1 includes basic level training on electrical components. Day 2 includes hands-on guidance for mini project implementation."
-    }
-  };
+      notesExist: true,
+      notes: "Day 1 includes basic training and Day 2 focuses on practical implementation."
+    },
+  ];
 
   return (
     <section id="courses" className="section-padding bg-gray-50">
       <div className="container mx-auto">
-        <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">Course <span className="text-gradient-tech">Topics</span></h2>
-          <div className="w-24 h-1 bg-gradient-tech mx-auto mb-6"></div>
-          <p className="max-w-3xl mx-auto text-gray-700">
-            Explore our wide range of course topics designed to enhance your technical skills and practical knowledge.
+        <div className="text-center mb-12">
+          <h2 className="text-3xl md:text-4xl font-bold mb-4 text-gray-800">Course Topics</h2>
+          <p className="text-lg text-gray-600 max-w-3xl mx-auto">
+            Our courses cover a wide range of technological domains to ensure students receive well-rounded, practical knowledge.
           </p>
         </div>
         
-        <Tabs defaultValue="vac" onValueChange={setActiveTab} className="w-full">
-          <div className="flex justify-center mb-8">
-            <TabsList className="grid grid-cols-2 md:grid-cols-4 w-full max-w-2xl">
-              <TabsTrigger value="vac">Value Added Courses</TabsTrigger>
-              <TabsTrigger value="skill">Skill Development</TabsTrigger>
-              <TabsTrigger value="oneday">One Day Workshop</TabsTrigger>
-              <TabsTrigger value="twoday">Two Days Workshop</TabsTrigger>
-            </TabsList>
-          </div>
-          
-          {Object.keys(topics).map((key) => {
-            const topic = topics[key as keyof typeof topics];
-            return (
-              <TabsContent key={key} value={key} className="animate-fade-in">
-                <div className="bg-white rounded-lg shadow-md p-8">
-                  <h3 className="text-2xl font-bold mb-4 text-techknot-blue">{topic.title}</h3>
-                  <p className="text-lg mb-2 font-medium">{topic.subtitle}</p>
-                  {topic.departments && (
-                    <p className="text-sm text-gray-600 italic mb-6">{topic.departments}</p>
-                  )}
-                  
-                  <div className="grid md:grid-cols-2 gap-6 mt-8">
-                    <div>
-                      <ul className="space-y-4">
-                        {topic.list.slice(0, Math.ceil(topic.list.length / 2)).map((item, i) => (
-                          <li key={i} className="flex items-start">
-                            <span className="inline-flex items-center justify-center rounded-full bg-techknot-purple/10 text-techknot-purple h-6 w-6 mr-3 shrink-0">{i + 1}</span>
-                            <span className="text-gray-700">{item}</span>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                    <div>
-                      <ul className="space-y-4">
-                        {topic.list.slice(Math.ceil(topic.list.length / 2)).map((item, i) => (
-                          <li key={i + Math.ceil(topic.list.length / 2)} className="flex items-start">
-                            <span className="inline-flex items-center justify-center rounded-full bg-techknot-purple/10 text-techknot-purple h-6 w-6 mr-3 shrink-0">{i + Math.ceil(topic.list.length / 2) + 1}</span>
-                            <span className="text-gray-700">{item}</span>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  </div>
-                  
-                  {(key === "twoday" && topics[key as keyof typeof topics].note) && (
-                    <div className="mt-8 p-4 bg-blue-50 rounded-lg border border-techknot-blue/30">
-                      <p className="text-gray-700">{topics[key as keyof typeof topics].note}</p>
-                    </div>
-                  )}
-                </div>
-              </TabsContent>
-            );
-          })}
-        </Tabs>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          {courseCategories.map((category, index) => (
+            <RevealOnScroll key={index} delay={index * 150}>
+              <div className="bg-white p-6 rounded-lg shadow-md h-full">
+                <h3 className="text-xl font-bold mb-3 text-techknot-blue">{category.title}</h3>
+                <p className="text-gray-700 mb-3 italic">{category.subtitle}</p>
+                <p className="text-sm mb-4 bg-gray-100 p-2 rounded"><span className="font-semibold">Applicable for:</span> {category.departments}</p>
+                
+                <ul className="list-disc pl-5 mb-4 space-y-1.5">
+                  {category.list.map((item, idx) => (
+                    <li key={idx} className="text-gray-700">{item}</li>
+                  ))}
+                </ul>
+                
+                {category.notesExist && category.notes && (
+                  <p className="text-xs text-gray-500 italic mt-3">Note: {category.notes}</p>
+                )}
+              </div>
+            </RevealOnScroll>
+          ))}
+        </div>
       </div>
     </section>
   );

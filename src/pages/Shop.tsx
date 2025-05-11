@@ -368,7 +368,7 @@ const Shop = () => {
                             className="bg-techknot-blue hover:bg-techknot-purple flex items-center gap-1"
                             onClick={() => addToCart(product)}
                           >
-                            <ShoppingCart size={16} /> Add to Cart
+                            <CartIcon size={16} /> Add to Cart
                           </Button>
                         </div>
                       </div>

@@ -1,10 +1,9 @@
-
 import { useState } from 'react';
 import RevealOnScroll from '@/components/RevealOnScroll';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import ScrollToTop from '@/components/ScrollToTop';
-import { BookOpen, Clock, Award, Users, CheckCircle, Filter, Video, Calendar, BookText } from 'lucide-react';
+import { BookOpen, Clock, Award, Users, CheckCircle, Filter, Video, Calendar, BookText, Search } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';

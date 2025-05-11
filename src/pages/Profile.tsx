@@ -341,7 +341,10 @@ const Profile = () => {
                   <div className="pt-4">
                     <Button 
                       className="w-full bg-techknot-blue hover:bg-techknot-purple"
-                      onClick={() => user.update()}
+                      onClick={() => {
+                        // Open Clerk's user profile management UI instead of calling update() directly
+                        user.update({});
+                      }}
                     >
                       Edit Profile
                     </Button>

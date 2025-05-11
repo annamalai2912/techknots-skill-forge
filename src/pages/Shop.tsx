@@ -1,13 +1,12 @@
-
 import { useState } from 'react';
 import RevealOnScroll from '@/components/RevealOnScroll';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import ScrollToTop from '@/components/ScrollToTop';
-import { ShoppingCart, Heart, Search, Filter, Star, Check } from 'lucide-react';
+import { ShoppingCart as CartIcon, Heart, Search, Filter, Star, Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
-import ShoppingCart as CartComponent from '@/components/ShoppingCart';
+import ShoppingCartComponent from '@/components/ShoppingCart';
 
 interface Product {
   id: number;
@@ -246,7 +245,7 @@ const Shop = () => {
                   onClick={() => setIsCartOpen(true)}
                   className="bg-techknot-blue hover:bg-techknot-purple flex items-center gap-2"
                 >
-                  <ShoppingCart size={18} />
+                  <CartIcon size={18} />
                   Cart ({cartItems.reduce((sum, item) => sum + item.quantity, 0)})
                 </Button>
               </div>
@@ -396,7 +395,7 @@ const Shop = () => {
         </div>
       </div>
       
-      <CartComponent 
+      <ShoppingCartComponent 
         isOpen={isCartOpen}
         onClose={() => setIsCartOpen(false)}
         cartItems={cartItems}

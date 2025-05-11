@@ -4,11 +4,39 @@ import RevealOnScroll from '@/components/RevealOnScroll';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import ScrollToTop from '@/components/ScrollToTop';
-import { ShoppingCart, Heart, Search, Filter, Star } from 'lucide-react';
+import { ShoppingCart, Heart, Search, Filter, Star, Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { useToast } from '@/hooks/use-toast';
+import ShoppingCart as CartComponent from '@/components/ShoppingCart';
+
+interface Product {
+  id: number;
+  name: string;
+  description: string;
+  price: number;
+  category: string;
+  rating: number;
+  stock: number;
+  image: string;
+}
+
+interface CartItem {
+  id: number;
+  name: string;
+  price: number;
+  quantity: number;
+  image: string;
+}
 
 const Shop = () => {
+  const { toast } = useToast();
   const [activeCategory, setActiveCategory] = useState('All');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [minPrice, setMinPrice] = useState<string>('');
+  const [maxPrice, setMaxPrice] = useState<string>('');
+  const [isCartOpen, setIsCartOpen] = useState(false);
+  const [cartItems, setCartItems] = useState<CartItem[]>([]);
+  const [wishlist, setWishlist] = useState<number[]>([]);
   
   // Sample IoT components for sale
   const products = [
@@ -106,9 +134,99 @@ const Shop = () => {
 
   const categories = ['All', 'Microcontrollers', 'Sensors', 'Actuators', 'Communication', 'Accessories', 'Kits'];
   
-  const filteredProducts = activeCategory === 'All' 
-    ? products 
-    : products.filter(product => product.category === activeCategory);
+  // Apply all filters (category, search, price)
+  const filteredProducts = products.filter(product => {
+    // Category filter
+    const matchesCategory = activeCategory === 'All' || product.category === activeCategory;
+    
+    // Search filter
+    const matchesSearch = searchQuery === '' || 
+      product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      product.description.toLowerCase().includes(searchQuery.toLowerCase());
+    
+    // Price filter
+    const minPriceValue = minPrice !== '' ? parseInt(minPrice) : 0;
+    const maxPriceValue = maxPrice !== '' ? parseInt(maxPrice) : Infinity;
+    const matchesPrice = product.price >= minPriceValue && product.price <= maxPriceValue;
+    
+    return matchesCategory && matchesSearch && matchesPrice;
+  });
+
+  const addToCart = (product: Product) => {
+    setCartItems(prevItems => {
+      // Check if item is already in cart
+      const existingItem = prevItems.find(item => item.id === product.id);
+      
+      if (existingItem) {
+        // Item exists, update quantity
+        return prevItems.map(item => 
+          item.id === product.id 
+            ? { ...item, quantity: item.quantity + 1 } 
+            : item
+        );
+      } else {
+        // Item doesn't exist, add new item
+        return [
+          ...prevItems, 
+          { 
+            id: product.id, 
+            name: product.name, 
+            price: product.price, 
+            quantity: 1,
+            image: product.image
+          }
+        ];
+      }
+    });
+    
+    toast({
+      title: "Added to cart!",
+      description: `${product.name} has been added to your cart.`,
+    });
+    
+    // Open the cart after adding an item
+    setIsCartOpen(true);
+  };
+
+  const updateItemQuantity = (id: number, newQuantity: number) => {
+    setCartItems(prevItems => 
+      prevItems.map(item => 
+        item.id === id ? { ...item, quantity: newQuantity } : item
+      )
+    );
+  };
+
+  const removeItem = (id: number) => {
+    setCartItems(prevItems => prevItems.filter(item => item.id !== id));
+    toast({
+      title: "Item removed",
+      description: "The item has been removed from your cart."
+    });
+  };
+
+  const toggleWishlist = (productId: number) => {
+    if (wishlist.includes(productId)) {
+      setWishlist(wishlist.filter(id => id !== productId));
+      toast({
+        title: "Removed from wishlist",
+        description: "Item has been removed from your wishlist."
+      });
+    } else {
+      setWishlist([...wishlist, productId]);
+      toast({
+        title: "Added to wishlist",
+        description: "Item has been added to your wishlist."
+      });
+    }
+  };
+
+  const applyPriceFilter = () => {
+    // The filtering is already handled in filteredProducts
+    toast({
+      title: "Filters applied",
+      description: "Price filters have been applied to your search."
+    });
+  };
 
   return (
     <>
@@ -123,6 +241,15 @@ const Shop = () => {
                 Explore our extensive collection of high-quality IoT components for all your 
                 projects and educational needs.
               </p>
+              <div className="mt-6">
+                <Button 
+                  onClick={() => setIsCartOpen(true)}
+                  className="bg-techknot-blue hover:bg-techknot-purple flex items-center gap-2"
+                >
+                  <ShoppingCart size={18} />
+                  Cart ({cartItems.reduce((sum, item) => sum + item.quantity, 0)})
+                </Button>
+              </div>
             </div>
           </RevealOnScroll>
 
@@ -136,7 +263,7 @@ const Shop = () => {
                   {categories.map(category => (
                     <button
                       key={category}
-                      className={`block w-full text-left px-3 py-2 rounded ${
+                      className={`block w-full text-left px-3 py-2 rounded transition-colors ${
                         activeCategory === category 
                           ? 'bg-techknot-blue text-white' 
                           : 'text-gray-700 hover:bg-gray-100'
@@ -158,6 +285,8 @@ const Shop = () => {
                     type="text" 
                     placeholder="Search products..." 
                     className="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-techknot-blue"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
                   />
                   <Search className="absolute right-3 top-2.5 text-gray-400" size={18} />
                 </div>
@@ -170,15 +299,24 @@ const Shop = () => {
                     type="number" 
                     placeholder="Min" 
                     className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-techknot-blue"
+                    value={minPrice}
+                    onChange={(e) => setMinPrice(e.target.value)}
                   />
                   <span>-</span>
                   <input 
                     type="number" 
                     placeholder="Max" 
                     className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-techknot-blue"
+                    value={maxPrice}
+                    onChange={(e) => setMaxPrice(e.target.value)}
                   />
                 </div>
-                <Button className="w-full mt-4 bg-techknot-blue hover:bg-techknot-purple">Apply Filter</Button>
+                <Button 
+                  className="w-full mt-4 bg-techknot-blue hover:bg-techknot-purple"
+                  onClick={applyPriceFilter}
+                >
+                  Apply Filter
+                </Button>
               </div>
             </div>
 
@@ -186,15 +324,21 @@ const Shop = () => {
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 {filteredProducts.map((product, index) => (
                   <RevealOnScroll key={product.id} delay={index * 100}>
-                    <div className="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow border border-gray-100">
-                      <div className="relative h-48 overflow-hidden group">
+                    <div className="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow border border-gray-100 group">
+                      <div className="relative h-48 overflow-hidden">
                         <img 
                           src={product.image} 
                           alt={product.name}
                           className="w-full h-full object-cover transition-transform group-hover:scale-105"
                         />
-                        <button className="absolute top-3 right-3 bg-white p-1.5 rounded-full shadow-md hover:bg-gray-100">
-                          <Heart size={18} className="text-gray-400 hover:text-red-500" />
+                        <button 
+                          className="absolute top-3 right-3 bg-white p-1.5 rounded-full shadow-md hover:bg-gray-100 transition-colors"
+                          onClick={() => toggleWishlist(product.id)}
+                        >
+                          <Heart 
+                            size={18} 
+                            className={wishlist.includes(product.id) ? "text-red-500 fill-red-500" : "text-gray-400 hover:text-red-500"} 
+                          />
                         </button>
                         {product.stock < 20 && (
                           <span className="absolute top-3 left-3 bg-red-500 text-white px-2 py-0.5 text-xs font-medium rounded">
@@ -221,7 +365,10 @@ const Shop = () => {
                         <p className="text-sm text-gray-600 mb-3 line-clamp-2">{product.description}</p>
                         <div className="flex justify-between items-center">
                           <span className="text-lg font-bold text-techknot-purple">₹{product.price}</span>
-                          <Button className="bg-techknot-blue hover:bg-techknot-purple flex items-center gap-1">
+                          <Button 
+                            className="bg-techknot-blue hover:bg-techknot-purple flex items-center gap-1"
+                            onClick={() => addToCart(product)}
+                          >
                             <ShoppingCart size={16} /> Add to Cart
                           </Button>
                         </div>
@@ -248,6 +395,14 @@ const Shop = () => {
           </div>
         </div>
       </div>
+      
+      <CartComponent 
+        isOpen={isCartOpen}
+        onClose={() => setIsCartOpen(false)}
+        cartItems={cartItems}
+        updateItemQuantity={updateItemQuantity}
+        removeItem={removeItem}
+      />
       
       <Footer />
       <ScrollToTop />
